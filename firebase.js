@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyAfYgJpIfIDhvlXTYuXUO16UlMpWg1hQ0M",
   authDomain: "yeeps-worlds.firebaseapp.com",
   projectId: "yeeps-worlds",
   storageBucket: "yeeps-worlds.firebasestorage.app",
