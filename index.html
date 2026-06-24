@@ -1,297 +1,585 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yeeps Worlds</title>
-
 <style>
+  :root{
+    --bg: #0b0f14;
+    --card: #13181f;
+    --card-edge: #1d242d;
+    --mint: #39ffc4;
+    --amber: #ffb84d;
+    --danger: #ff5c7a;
+    --muted: #7d8a99;
+    --text: #e9eef2;
+  }
 
-body{
-background:#111;
-color:white;
-font-family:Arial;
-margin:0;
-}
+  *{ box-sizing: border-box; }
 
-header{
-background:#00ffb3;
-color:black;
-padding:25px;
-text-align:center;
-}
+  body{
+    background: radial-gradient(circle at 50% -10%, #142019 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+  }
 
-.card{
-background:#222;
-padding:20px;
-margin:20px;
-border-radius:15px;
-}
+  header{
+    padding: 48px 24px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--card-edge);
+    position: relative;
+  }
 
-input, textarea{
-width:90%;
-padding:10px;
-margin:8px;
-border-radius:10px;
-border:none;
-}
+  header h1{
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+    background: linear-gradient(135deg, var(--mint), #8effdc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 
-button{
-padding:10px;
-border-radius:10px;
-border:none;
-cursor:pointer;
-}
+  header p{
+    color: var(--muted);
+    margin: 10px 0 0;
+    font-size: 1rem;
+  }
 
-.upload{
-background:#00ffb3;
-}
+  .auth-bar{
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-.up{
-background:#00ff88;
-}
+  .auth-bar img.avatar{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--mint);
+  }
 
-.down{
-background:#ff5555;
-}
+  .auth-bar span.name{
+    font-size: 0.85rem;
+    color: var(--text);
+  }
 
-img{
-max-width:300px;
-border-radius:15px;
-}
+  .btn{
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+  .btn:hover{ filter: brightness(1.1); transform: translateY(-1px); }
+  .btn:active{ transform: translateY(0); }
+  .btn:focus-visible{ outline: 2px solid var(--mint); outline-offset: 2px; }
 
+  .btn-google{
+    background: #fff;
+    color: #1f1f1f;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-signout{
+    background: var(--card-edge);
+    color: var(--text);
+  }
+
+  main{
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  .panel{
+    background: var(--card);
+    border: 1px solid var(--card-edge);
+    padding: 28px;
+    margin: 28px 0;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel::before{
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--mint), transparent);
+  }
+
+  .panel h2{
+    margin: 0 0 18px;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .signin-gate{
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--muted);
+  }
+  .signin-gate p{ margin: 0 0 16px; }
+
+  label.field-label{
+    display: block;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin: 14px 4px 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  input[type="text"], textarea{
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--card-edge);
+    background: #0e1319;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  input[type="text"]:focus, textarea:focus{
+    outline: none;
+    border-color: var(--mint);
+  }
+  textarea{ resize: vertical; min-height: 70px; }
+
+  .file-drop{
+    border: 1.5px dashed var(--card-edge);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: border-color 0.15s ease, color 0.15s ease;
+    display: block;
+  }
+  .file-drop:hover{ border-color: var(--mint); color: var(--text); }
+  .file-drop input[type="file"]{ display: none; }
+  .file-drop.has-file{ border-color: var(--mint); color: var(--mint); }
+
+  .preview-thumb{
+    max-width: 160px;
+    border-radius: 10px;
+    margin-top: 10px;
+    display: block;
+  }
+
+  .upload-btn{
+    background: var(--mint);
+    color: #07140f;
+    margin-top: 18px;
+    width: 100%;
+    font-size: 1rem;
+    padding: 13px;
+  }
+  .upload-btn:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .section-title{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 36px 4px 4px;
+  }
+  .section-title h2{ margin: 0; font-size: 1.3rem; }
+  .section-title span{ color: var(--muted); font-size: 0.85rem; }
+
+  #worlds{
+    display: grid;
+    gap: 18px;
+    margin-top: 18px;
+  }
+
+  .world-card{
+    background: var(--card);
+    border: 1px solid var(--card-edge);
+    border-radius: 16px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .world-card::before{
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--mint), transparent);
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+  }
+  .world-card:hover{
+    border-color: #2a3744;
+    transform: translateY(-2px);
+  }
+  .world-card:hover::before{ opacity: 1; }
+
+  .world-card h3{
+    margin: 0 0 4px;
+    font-size: 1.2rem;
+  }
+  .world-card .meta{
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0 0 12px;
+  }
+  .world-card .desc{
+    color: var(--text);
+    line-height: 1.5;
+    margin: 0 0 14px;
+  }
+  .world-card img{
+    max-width: 100%;
+    max-height: 260px;
+    border-radius: 12px;
+    display: block;
+    margin-bottom: 14px;
+    object-fit: cover;
+  }
+  .world-card a.video-link{
+    color: var(--mint);
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+  .world-card a.video-link:hover{ text-decoration: underline; }
+
+  .vote-row{ display: flex; gap: 10px; }
+  .vote-btn{
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+  .vote-up{ background: var(--amber); color: #2a1c00; }
+  .vote-down{ background: var(--danger); color: #2a000a; }
+  .vote-btn:disabled{ opacity: 0.45; cursor: not-allowed; }
+
+  .empty-state, .error-state{
+    text-align: center;
+    color: var(--muted);
+    padding: 50px 20px;
+    border: 1px dashed var(--card-edge);
+    border-radius: 16px;
+  }
+  .error-state{ color: var(--danger); border-color: rgba(255,92,122,0.3); }
+
+  .spinner{
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--card-edge);
+    border-top-color: var(--mint);
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  @media (max-width: 600px){
+    .auth-bar{ position: static; justify-content: center; margin-top: 16px; }
+    header{ padding: 32px 16px; }
+    header h1{ font-size: 1.9rem; }
+  }
 </style>
-
 </head>
-
-
 <body>
 
-
 <header>
-
-<h1>🌎 Yeeps Worlds</h1>
-
-<p>Share your community worlds</p>
-
+  <h1>🌎 Yeeps Worlds</h1>
+  <p>Share world</p>
+  <div class="auth-bar" id="authBar"></div>
 </header>
 
+<main>
 
+  <div class="panel" id="uploadPanel">
+    <h2>➕ Share world</h2>
+    <div id="uploadGateContent"></div>
+  </div>
 
-<div class="card">
+  <div class="section-title">
+    <h2>Community Worlds</h2>
+    <span id="worldCount"></span>
+  </div>
+  <div id="worlds">
+    <div class="empty-state">
+      <div class="spinner"></div>
+      Loading worlds&hellip;
+    </div>
+  </div>
 
-<h2>➕ Upload World</h2>
-
-
-<input id="name" placeholder="World Name">
-
-
-<textarea id="desc" placeholder="Description"></textarea>
-
-
-<input id="creator" placeholder="Creator">
-
-
-<input id="image" placeholder="Image URL">
-
-
-<input id="video" placeholder="Video URL">
-
-
-<br>
-
-<button class="upload" onclick="uploadWorld()">
-
-Upload World
-
-</button>
-
-
-</div>
-
-
-
-
-<h2 style="padding:20px">
-Community Worlds
-</h2>
-
-
-<div id="worlds">
-
-Loading...
-
-</div>
-
-
-
-
+</main>
 
 <script type="module">
-
-
-import { db } from "./firebase.js";
-
-
+import { db, auth, googleProvider, storage } from "./firebase.js";
 import {
-
-collection,
-addDoc,
-onSnapshot,
-doc,
-updateDoc
-
+  collection,
+  addDoc,
+  onSnapshot,
+  doc,
+  updateDoc,
+  serverTimestamp,
+  increment,
+  orderBy,
+  query
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
+const authBar = document.getElementById("authBar");
+const uploadGateContent = document.getElementById("uploadGateContent");
+const worldsEl = document.getElementById("worlds");
+const worldCountEl = document.getElementById("worldCount");
 
+const GOOGLE_ICON_SVG = `<svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.85 2.09-1.81 2.73v2.27h2.92c1.71-1.57 2.69-3.88 2.69-6.64z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.18l-2.92-2.27c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.34C2.44 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.7c-.18-.54-.28-1.11-.28-1.7s.1-1.16.28-1.7V4.96H.96A8.99 8.99 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3.01-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58z"/></svg>`;
 
+let currentUser = null;
+let selectedFile = null;
 
+// ---------- AUTH ----------
 
-window.uploadWorld = async function(){
+window.signInGoogle = async function () {
+  try {
+    await signInWithPopup(auth, googleProvider);
+  } catch (err) {
+    console.error("Sign-in failed:", err);
+    alert("Sign-in failed: " + err.message);
+  }
+};
 
+window.signOutUser = async function () {
+  await signOut(auth);
+};
 
-await addDoc(collection(db,"worlds"),{
-
-
-name:
-document.getElementById("name").value,
-
-
-description:
-document.getElementById("desc").value,
-
-
-creator:
-document.getElementById("creator").value,
-
-
-image:
-document.getElementById("image").value,
-
-
-video:
-document.getElementById("video").value,
-
-
-upvotes:0,
-
-downvotes:0
-
-
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  renderAuthBar();
+  renderUploadPanel();
 });
 
-
-alert("World Uploaded!");
-
+function renderAuthBar() {
+  if (currentUser) {
+    authBar.innerHTML = `
+      <img class="avatar" src="${currentUser.photoURL || ''}" alt="">
+      <span class="name">${escapeHtml(currentUser.displayName || currentUser.email || 'Player')}</span>
+      <button class="btn btn-signout" onclick="signOutUser()">Sign out</button>
+    `;
+  } else {
+    authBar.innerHTML = `
+      <button class="btn btn-google" onclick="signInGoogle()">
+        ${GOOGLE_ICON_SVG}
+        Sign in with Google
+      </button>
+    `;
+  }
 }
 
+// ---------- UPLOAD PANEL ----------
 
+function renderUploadPanel() {
+  if (!currentUser) {
+    uploadGateContent.innerHTML = `
+      <div class="signin-gate">
+        <p>Sign in with Google to share a world with the community.</p>
+        <button class="btn btn-google" onclick="signInGoogle()">
+          ${GOOGLE_ICON_SVG}
+          Sign in with Google
+        </button>
+      </div>
+    `;
+    return;
+  }
 
+  selectedFile = null;
+  uploadGateContent.innerHTML = `
+    <label class="field-label" for="worldName">World name</label>
+    <input type="text" id="worldName" placeholder="Skyward Citadel">
 
+    <label class="field-label" for="worldDesc">Description</label>
+    <textarea id="worldDesc" placeholder="What makes this world worth visiting?"></textarea>
 
-onSnapshot(collection(db,"worlds"),(snap)=>{
+    <label class="field-label" for="worldVideo">Video URL (optional)</label>
+    <input type="text" id="worldVideo" placeholder="https://youtube.com/...">
 
+    <label class="field-label">Cover image (optional)</label>
+    <label class="file-drop" id="fileDrop">
+      <input type="file" id="worldImageFile" accept="image/*">
+      <span id="fileDropLabel">Click to choose an image</span>
+    </label>
+    <img id="filePreview" class="preview-thumb" style="display:none;">
 
-let html="";
+    <button class="btn upload-btn" id="submitBtn" onclick="uploadWorld()">Share world</button>
+  `;
 
+  const fileInput = document.getElementById("worldImageFile");
+  const fileDrop = document.getElementById("fileDrop");
+  const fileLabel = document.getElementById("fileDropLabel");
+  const preview = document.getElementById("filePreview");
 
-snap.forEach((doc)=>{
-
-
-let w=doc.data();
-
-
-html += `
-
-<div class="card">
-
-<h2>${w.name}</h2>
-
-<p>
-👤 ${w.creator}
-</p>
-
-
-<p>
-${w.description}
-</p>
-
-
-${w.image ?
-`<img src="${w.image}">`
-:
-""}
-
-
-<br><br>
-
-
-<button class="up"
-onclick="vote('${doc.id}','up')">
-
-👍 ${w.upvotes}
-
-</button>
-
-
-<button class="down"
-onclick="vote('${doc.id}','down')">
-
-👎 ${w.downvotes}
-
-</button>
-
-
-</div>
-
-
-`;
-
-
-});
-
-
-document.getElementById("worlds").innerHTML=html;
-
-
-});
-
-
-
-
-
-window.vote = async function(id,type){
-
-
-let ref=doc(db,"worlds",id);
-
-
-let change={};
-
-
-if(type=="up"){
-
-change.upvotes=1;
-
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    selectedFile = file;
+    fileDrop.classList.add("has-file");
+    fileLabel.textContent = `✓ ${file.name}`;
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+  });
 }
 
-else{
+window.uploadWorld = async function () {
+  if (!currentUser) {
+    alert("Please sign in first.");
+    return;
+  }
 
-change.downvotes=1;
+  const name = document.getElementById("worldName").value.trim();
+  const description = document.getElementById("worldDesc").value.trim();
+  const video = document.getElementById("worldVideo").value.trim();
 
+  if (!name) {
+    alert("Give your world a name first.");
+    return;
+  }
+
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Sharing\u2026";
+
+  try {
+    let imageUrl = "";
+
+    if (selectedFile) {
+      submitBtn.textContent = "Uploading image\u2026";
+      const path = `world-images/${currentUser.uid}_${Date.now()}_${selectedFile.name}`;
+      const fileRef = storageRef(storage, path);
+      await uploadBytes(fileRef, selectedFile);
+      imageUrl = await getDownloadURL(fileRef);
+    }
+
+    submitBtn.textContent = "Saving\u2026";
+    await addDoc(collection(db, "worlds"), {
+      name,
+      description,
+      video,
+      image: imageUrl,
+      creator: currentUser.displayName || currentUser.email || "Anonymous",
+      creatorUid: currentUser.uid,
+      upvotes: 0,
+      downvotes: 0,
+      createdAt: serverTimestamp()
+    });
+
+    renderUploadPanel();
+  } catch (err) {
+    console.error("Upload failed:", err);
+    alert("Upload failed: " + err.message);
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Share world";
+  }
+};
+
+// ---------- WORLD LIST ----------
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str || "";
+  return div.innerHTML;
 }
 
+function renderWorlds(items) {
+  if (items.length === 0) {
+    worldsEl.innerHTML = `
+      <div class="empty-state">
+        No worlds shared yet &mdash; be the first to share one above.
+      </div>
+    `;
+    worldCountEl.textContent = "";
+    return;
+  }
 
-await updateDoc(ref,change);
+  worldCountEl.textContent = `${items.length} world${items.length === 1 ? "" : "s"}`;
 
-
+  worldsEl.innerHTML = items.map(({ id, data: w }) => `
+    <div class="world-card">
+      <h3>${escapeHtml(w.name)}</h3>
+      <p class="meta">by ${escapeHtml(w.creator || "Anonymous")}</p>
+      ${w.description ? `<p class="desc">${escapeHtml(w.description)}</p>` : ""}
+      ${w.image ? `<img src="${w.image}" alt="${escapeHtml(w.name)}" loading="lazy">` : ""}
+      ${w.video ? `<a class="video-link" href="${escapeHtml(w.video)}" target="_blank" rel="noopener noreferrer">▶ Watch trailer</a>` : ""}
+      <div class="vote-row">
+        <button class="btn vote-btn vote-up" ${currentUser ? "" : "disabled"} onclick="vote('${id}','up')">👍 ${w.upvotes || 0}</button>
+        <button class="btn vote-btn vote-down" ${currentUser ? "" : "disabled"} onclick="vote('${id}','down')">👎 ${w.downvotes || 0}</button>
+      </div>
+    </div>
+  `).join("");
 }
 
+let worldsQuery;
+try {
+  worldsQuery = query(collection(db, "worlds"), orderBy("createdAt", "desc"));
+} catch (e) {
+  worldsQuery = collection(db, "worlds");
+}
 
+onSnapshot(
+  worldsQuery,
+  (snap) => {
+    const items = [];
+    snap.forEach((d) => items.push({ id: d.id, data: d.data() }));
+    renderWorlds(items);
+  },
+  (err) => {
+    console.error("Failed to load worlds:", err);
+    worldsEl.innerHTML = `
+      <div class="error-state">
+        Couldn't load worlds. Check your Firestore rules and connection, then refresh.<br>
+        <small>${escapeHtml(err.message)}</small>
+      </div>
+    `;
+    worldCountEl.textContent = "";
+  }
+);
+
+window.vote = async function (id, type) {
+  if (!currentUser) {
+    alert("Sign in to vote.");
+    return;
+  }
+  const ref = doc(db, "worlds", id);
+  const change = type === "up" ? { upvotes: increment(1) } : { downvotes: increment(1) };
+  try {
+    await updateDoc(ref, change);
+  } catch (err) {
+    console.error("Vote failed:", err);
+    alert("Vote failed: " + err.message);
+  }
+};
 </script>
-
-
-
 </body>
-
 </html>
