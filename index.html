@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Yeeps Worlds</title>
+
+<style>
+body {
+    background:#111;
+    color:white;
+    font-family:Arial;
+    margin:0;
+}
+
+header {
+    background:#00ffb3;
+    color:black;
+    padding:20px;
+    text-align:center;
+}
+
+.card {
+    background:#222;
+    margin:20px;
+    padding:20px;
+    border-radius:15px;
+}
+
+button {
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.up {
+    background:#00ff88;
+}
+
+.down {
+    background:#ff5555;
+}
+
+img {
+    max-width:300px;
+    border-radius:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>🌎 Yeeps Worlds</h1>
+<p>Community made worlds</p>
+</header>
+
+
+<div class="card">
+
+<h2>Example World</h2>
+
+<p>
+Creator: PugslyVRB
+</p>
+
+<p>
+A cool Yeeps community world!
+</p>
+
+<img src="https://placehold.co/300x200">
+
+
+<br><br>
+
+<button class="up" onclick="upvote()">
+👍 Upvote <span id="votes">0</span>
+</button>
+
+<button class="down">
+👎 Downvote
+</button>
+
+</div>
+
+
+<script>
+
+let votes = 0;
+
+function upvote(){
+
+votes++;
+
+document.getElementById("votes").innerHTML=votes;
+
+}
+
+</script>
+
+
+</body>
+</html>
