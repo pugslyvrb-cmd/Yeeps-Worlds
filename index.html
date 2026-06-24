@@ -1,103 +1,336 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <title>Yeeps Worlds</title>
 
 <style>
-body {
+
+body{
     background:#111;
     color:white;
     font-family:Arial;
     margin:0;
 }
 
-header {
+header{
     background:#00ffb3;
     color:black;
-    padding:20px;
+    padding:25px;
     text-align:center;
 }
 
-.card {
-    background:#222;
-    margin:20px;
+.container{
     padding:20px;
+}
+
+.card{
+    background:#222;
+    padding:20px;
+    margin:20px 0;
     border-radius:15px;
 }
 
-button {
+input, textarea{
+    width:90%;
     padding:10px;
+    margin:8px;
+    border-radius:8px;
     border:none;
+}
+
+button{
+    padding:10px 15px;
     border-radius:10px;
+    border:none;
     cursor:pointer;
 }
 
-.up {
+.submit{
+    background:#00ffb3;
+}
+
+.up{
     background:#00ff88;
 }
 
-.down {
+.down{
     background:#ff5555;
 }
 
-img {
+img{
     max-width:300px;
-    border-radius:10px;
+    border-radius:15px;
 }
+
+iframe{
+    max-width:400px;
+}
+
 </style>
 
 </head>
 
+
 <body>
 
+
 <header>
+
 <h1>🌎 Yeeps Worlds</h1>
-<p>Community made worlds</p>
+
+<p>Share and discover Yeeps community worlds</p>
+
 </header>
+
+
+
+<div class="container">
+
 
 
 <div class="card">
 
-<h2>Example World</h2>
-
-<p>
-Creator: PugslyVRB
-</p>
-
-<p>
-A cool Yeeps community world!
-</p>
-
-<img src="https://placehold.co/300x200">
+<h2>Create a World</h2>
 
 
-<br><br>
+<input id="name" placeholder="World Name">
 
-<button class="up" onclick="upvote()">
-👍 Upvote <span id="votes">0</span>
+
+<textarea id="description" placeholder="Description"></textarea>
+
+
+<input id="creator" placeholder="Creator Name">
+
+
+<input id="image" placeholder="Image URL">
+
+
+<input id="video" placeholder="YouTube Video URL">
+
+
+<br>
+
+
+<button class="submit" onclick="addWorld()">
+
+Upload World
+
 </button>
 
-<button class="down">
-👎 Downvote
-</button>
 
 </div>
 
 
-<script>
 
-let votes = 0;
 
-function upvote(){
+<h2>Community Worlds</h2>
 
-votes++;
 
-document.getElementById("votes").innerHTML=votes;
+<div id="worlds">
+
+Loading...
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<script type="module">
+
+
+import { db } from "./firebase.js";
+
+
+import {
+
+collection,
+addDoc,
+onSnapshot,
+doc,
+updateDoc
+
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+
+
+
+const worlds = document.getElementById("worlds");
+
+
+
+
+onSnapshot(collection(db,"worlds"),(snapshot)=>{
+
+
+worlds.innerHTML="";
+
+
+snapshot.forEach((data)=>{
+
+
+let w=data.data();
+
+
+worlds.innerHTML += `
+
+
+<div class="card">
+
+
+<h2>${w.name}</h2>
+
+
+<p>
+Creator: ${w.creator}
+</p>
+
+
+<p>
+${w.description}
+</p>
+
+
+
+${w.image ? 
+`<img src="${w.image}">`
+:""}
+
+
+
+<br>
+
+
+<button class="up" onclick="vote('${data.id}','up')">
+
+👍 ${w.upvotes || 0}
+
+</button>
+
+
+
+<button class="down" onclick="vote('${data.id}','down')">
+
+👎 ${w.downvotes || 0}
+
+</button>
+
+
+
+</div>
+
+
+`;
+
+
+});
+
+
+});
+
+
+
+
+
+
+
+window.addWorld = async function(){
+
+
+
+await addDoc(collection(db,"worlds"),{
+
+
+name:
+document.getElementById("name").value,
+
+
+description:
+document.getElementById("description").value,
+
+
+creator:
+document.getElementById("creator").value,
+
+
+image:
+document.getElementById("image").value,
+
+
+video:
+document.getElementById("video").value,
+
+
+upvotes:0,
+
+
+downvotes:0
+
+
+
+});
+
+
+
+alert("World uploaded!");
+
+
 
 }
+
+
+
+
+
+
+window.vote = async function(id,type){
+
+
+let ref=doc(db,"worlds",id);
+
+
+
+if(type=="up"){
+
+
+await updateDoc(ref,{
+
+upvotes:1
+
+});
+
+
+}
+
+
+else{
+
+
+await updateDoc(ref,{
+
+downvotes:1
+
+});
+
+
+}
+
+
+}
+
+
 
 </script>
 
 
+
 </body>
+
 </html>
