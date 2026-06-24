@@ -8,64 +8,56 @@
 <style>
 
 body{
-    background:#111;
-    color:white;
-    font-family:Arial;
-    margin:0;
+background:#111;
+color:white;
+font-family:Arial;
+margin:0;
 }
 
 header{
-    background:#00ffb3;
-    color:black;
-    padding:25px;
-    text-align:center;
-}
-
-.container{
-    padding:20px;
+background:#00ffb3;
+color:black;
+padding:25px;
+text-align:center;
 }
 
 .card{
-    background:#222;
-    padding:20px;
-    margin:20px 0;
-    border-radius:15px;
+background:#222;
+padding:20px;
+margin:20px;
+border-radius:15px;
 }
 
 input, textarea{
-    width:90%;
-    padding:10px;
-    margin:8px;
-    border-radius:8px;
-    border:none;
+width:90%;
+padding:10px;
+margin:8px;
+border-radius:10px;
+border:none;
 }
 
 button{
-    padding:10px 15px;
-    border-radius:10px;
-    border:none;
-    cursor:pointer;
+padding:10px;
+border-radius:10px;
+border:none;
+cursor:pointer;
 }
 
-.submit{
-    background:#00ffb3;
+.upload{
+background:#00ffb3;
 }
 
 .up{
-    background:#00ff88;
+background:#00ff88;
 }
 
 .down{
-    background:#ff5555;
+background:#ff5555;
 }
 
 img{
-    max-width:300px;
-    border-radius:15px;
-}
-
-iframe{
-    max-width:400px;
+max-width:300px;
+border-radius:15px;
 }
 
 </style>
@@ -80,40 +72,35 @@ iframe{
 
 <h1>🌎 Yeeps Worlds</h1>
 
-<p>Share and discover Yeeps community worlds</p>
+<p>Share your community worlds</p>
 
 </header>
 
 
 
-<div class="container">
-
-
-
 <div class="card">
 
-<h2>Create a World</h2>
+<h2>➕ Upload World</h2>
 
 
 <input id="name" placeholder="World Name">
 
 
-<textarea id="description" placeholder="Description"></textarea>
+<textarea id="desc" placeholder="Description"></textarea>
 
 
-<input id="creator" placeholder="Creator Name">
+<input id="creator" placeholder="Creator">
 
 
 <input id="image" placeholder="Image URL">
 
 
-<input id="video" placeholder="YouTube Video URL">
+<input id="video" placeholder="Video URL">
 
 
 <br>
 
-
-<button class="submit" onclick="addWorld()">
+<button class="upload" onclick="uploadWorld()">
 
 Upload World
 
@@ -125,16 +112,14 @@ Upload World
 
 
 
-<h2>Community Worlds</h2>
+<h2 style="padding:20px">
+Community Worlds
+</h2>
 
 
 <div id="worlds">
 
 Loading...
-
-</div>
-
-
 
 </div>
 
@@ -162,87 +147,7 @@ updateDoc
 
 
 
-const worlds = document.getElementById("worlds");
-
-
-
-
-onSnapshot(collection(db,"worlds"),(snapshot)=>{
-
-
-worlds.innerHTML="";
-
-
-snapshot.forEach((data)=>{
-
-
-let w=data.data();
-
-
-worlds.innerHTML += `
-
-
-<div class="card">
-
-
-<h2>${w.name}</h2>
-
-
-<p>
-Creator: ${w.creator}
-</p>
-
-
-<p>
-${w.description}
-</p>
-
-
-
-${w.image ? 
-`<img src="${w.image}">`
-:""}
-
-
-
-<br>
-
-
-<button class="up" onclick="vote('${data.id}','up')">
-
-👍 ${w.upvotes || 0}
-
-</button>
-
-
-
-<button class="down" onclick="vote('${data.id}','down')">
-
-👎 ${w.downvotes || 0}
-
-</button>
-
-
-
-</div>
-
-
-`;
-
-
-});
-
-
-});
-
-
-
-
-
-
-
-window.addWorld = async function(){
-
+window.uploadWorld = async function(){
 
 
 await addDoc(collection(db,"worlds"),{
@@ -253,7 +158,7 @@ document.getElementById("name").value,
 
 
 description:
-document.getElementById("description").value,
+document.getElementById("desc").value,
 
 
 creator:
@@ -270,21 +175,86 @@ document.getElementById("video").value,
 
 upvotes:0,
 
-
 downvotes:0
-
 
 
 });
 
 
-
-alert("World uploaded!");
-
-
+alert("World Uploaded!");
 
 }
 
+
+
+
+
+onSnapshot(collection(db,"worlds"),(snap)=>{
+
+
+let html="";
+
+
+snap.forEach((doc)=>{
+
+
+let w=doc.data();
+
+
+html += `
+
+<div class="card">
+
+<h2>${w.name}</h2>
+
+<p>
+👤 ${w.creator}
+</p>
+
+
+<p>
+${w.description}
+</p>
+
+
+${w.image ?
+`<img src="${w.image}">`
+:
+""}
+
+
+<br><br>
+
+
+<button class="up"
+onclick="vote('${doc.id}','up')">
+
+👍 ${w.upvotes}
+
+</button>
+
+
+<button class="down"
+onclick="vote('${doc.id}','down')">
+
+👎 ${w.downvotes}
+
+</button>
+
+
+</div>
+
+
+`;
+
+
+});
+
+
+document.getElementById("worlds").innerHTML=html;
+
+
+});
 
 
 
@@ -296,35 +266,26 @@ window.vote = async function(id,type){
 let ref=doc(db,"worlds",id);
 
 
+let change={};
+
 
 if(type=="up"){
 
-
-await updateDoc(ref,{
-
-upvotes:1
-
-});
-
+change.upvotes=1;
 
 }
-
 
 else{
 
-
-await updateDoc(ref,{
-
-downvotes:1
-
-});
-
+change.downvotes=1;
 
 }
 
 
-}
+await updateDoc(ref,change);
 
+
+}
 
 
 </script>
